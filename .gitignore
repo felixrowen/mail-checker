@@ -1,0 +1,14 @@
+# Root
+.env
+.env.*
+
+# Node
+node_modules/
+dist/
+*.log
+
+# macOS
+.DS_Store
+
+# VSCode
+.vscode/
