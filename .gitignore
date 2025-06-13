@@ -12,3 +12,6 @@ dist/
 
 # VSCode
 .vscode/
+
+# Prima
+backend/src/generated/prisma
