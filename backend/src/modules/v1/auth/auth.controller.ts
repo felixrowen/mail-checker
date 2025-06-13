@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { registerSchema } from "./auth.schema";
-import { createUser } from "./auth.service";
+import { createUser, getUserByEmail } from "./auth.service";
 import { errorResponse, successResponse } from "@/utils/response";
 
 export const register = async (req: Request, res: Response): Promise<void> => {
@@ -19,6 +19,16 @@ export const register = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = result.data;
 
   try {
+    const existingUser = await getUserByEmail(email);
+    if (existingUser) {
+      res.status(500).json(
+        errorResponse({
+          message: "User already exists with this email",
+        })
+      );
+      return;
+    }
+
     const user = await createUser(email, password);
     res.status(201).json(
       successResponse({
