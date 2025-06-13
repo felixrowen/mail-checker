@@ -1,1 +1,1 @@
-# mail-checker
+# Mail Checker Monorepo
