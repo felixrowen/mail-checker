@@ -14,14 +14,14 @@ datasource db {
 }
 
 model User {
-  id        String       @id @default(uuid())
-  email     String       @unique
+  id        String   @id @default(uuid())
+  email     String   @unique
   password  String
-  createdAt DateTime     @default(now())
-  tests     TestResult[]
+  createdAt DateTime @default(now())
+  checks    Check[]
 }
 
-model TestResult {
+model Check {
   id        String   @id @default(uuid())
   domain    String
   result    Json
