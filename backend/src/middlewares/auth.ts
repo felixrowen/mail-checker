@@ -10,12 +10,11 @@ export const authMiddleware = (
   req: AuthRequest,
   res: Response,
   next: NextFunction
-) => {
+): void => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res
-      .status(401)
-      .json(errorResponse({ message: "No token provided" }));
+    res.status(401).json(errorResponse({ message: "No token provided" }));
+    return;
   }
 
   const token = authHeader.split(" ")[1];
@@ -27,6 +26,6 @@ export const authMiddleware = (
     req.user = { id: decoded.id };
     next();
   } catch (error) {
-    return res.status(401).json(errorResponse({ message: "Unauthorized" }));
+    res.status(401).json(errorResponse({ message: "Unauthorized" }));
   }
 };
