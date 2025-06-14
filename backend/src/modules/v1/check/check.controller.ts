@@ -41,3 +41,22 @@ export const checkDomainHandler = async (
     return;
   }
 };
+
+export const checkResultHistory = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  const userId = req.user!.id;
+
+  try {
+    const checks = await prisma.check.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+    });
+
+    res.json(successResponse(checks));
+  } catch (error) {
+    res.status(500).json(errorResponse(error));
+    return;
+  }
+};
