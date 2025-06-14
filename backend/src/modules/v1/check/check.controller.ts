@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { successResponse, errorResponse } from "@/utils/response";
-import { checkDomain } from "./check.service";
-import { AuthRequest } from "@/middlewares/auth";
 import { createCheckSchema } from "./check.schema";
+import { runPythonCheck } from "@/lib/python-runner";
+import { prisma } from "@/lib/prisma";
+import { AuthRequest } from "@/middlewares/auth";
 
 export const checkDomainHandler = async (
   req: AuthRequest,
@@ -23,7 +24,20 @@ export const checkDomainHandler = async (
   const { domain } = result.data;
   const userId = req.user!.id;
 
-  const checkResult = await checkDomain(domain, userId);
+  try {
+    const pythonResult = await runPythonCheck(domain);
 
-  res.json(successResponse(checkResult));
+    const checkResult = await prisma.check.create({
+      data: {
+        domain,
+        result: pythonResult,
+        userId,
+      },
+    });
+
+    res.json(successResponse(checkResult));
+  } catch (error) {
+    res.status(500).json(errorResponse(error));
+    return;
+  }
 };
