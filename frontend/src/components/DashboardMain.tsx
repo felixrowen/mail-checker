@@ -18,9 +18,7 @@ export function DashboardMain() {
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Welcome Section */}
         <div className="text-center space-y-4">
-          <h2 className="text-3xl font-bold text-gray-900">
-            Welcome to VeriMail
-          </h2>
+          <h2 className="text-3xl font-bold">Welcome to VeriMail</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
             Verify your domain's email configuration including SPF, DKIM, DMARC
             records, and mail server connectivity. Enter your domain below to
@@ -29,7 +27,7 @@ export function DashboardMain() {
         </div>
 
         {/* Domain Input Form */}
-        <Card className="bg-white shadow-sm border border-gray-200">
+        <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Search className="w-5 h-5 text-blue-600" />
@@ -47,19 +45,17 @@ export function DashboardMain() {
                 onChange={(e) => setDomain(e.target.value)}
                 className="flex-1"
               />
-              <Button className="bg-blue-600 hover:bg-blue-700 min-w-[120px]">
+              <Button className="bg-blue-600 hover:bg-blue-700">
                 Check Domain
               </Button>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-white shadow-sm border border-gray-200">
+        <Card>
           <CardContent className="py-12 text-center">
             <Shield className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              No Results Yet
-            </h3>
+            <h3 className="text-lg font-medium mb-2">No Results Yet</h3>
             <p className="text-gray-500">
               Enter a domain name above and click "Check Domain" to see mail
               configuration results

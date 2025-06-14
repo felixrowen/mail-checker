@@ -48,7 +48,7 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
-                    className="w-full justify-start px-3 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors duration-200"
+                    className="text-gray-700 hover:bg-blue-50 hover:text-blue-700"
                   >
                     <a href={item.url} className="flex items-center gap-3">
                       <item.icon className="w-4 h-4" />

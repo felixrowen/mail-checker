@@ -15,10 +15,8 @@ export function DashboardHeader() {
   return (
     <header className="h-16 border-b border-gray-200 bg-white px-6 flex items-center justify-between">
       <div className="flex items-center gap-4">
-        <SidebarTrigger className="hover:bg-gray-100 rounded-lg bg-inherit" />
-        <div>
-          <h1 className="text-xl font-semibold text-gray-900">Dashboard</h1>
-        </div>
+        <SidebarTrigger className="hover:bg-gray-100" />
+        <h1 className="text-xl font-semibold">Dashboard</h1>
       </div>
 
       <div className="flex items-center gap-4">
@@ -33,7 +31,7 @@ export function DashboardHeader() {
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56 bg-white" align="end" forceMount>
+          <DropdownMenuContent className="w-56" align="end" forceMount>
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none">Felix R</p>
