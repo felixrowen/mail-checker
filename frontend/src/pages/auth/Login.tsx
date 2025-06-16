@@ -36,6 +36,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 const Login = () => {
   const router = useRouter();
+
   const { mutate: login, isPending } = useMutation<
     ApiResponse<AuthResponse>,
     Error,
@@ -44,7 +45,6 @@ const Login = () => {
     mutationFn: authApi.login,
     onSuccess: (data) => {
       const { token, ...user } = data.data;
-
       if (token) {
         storage.setAuthToken(token);
         storage.setCurrentUser(user);
@@ -59,15 +59,10 @@ const Login = () => {
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+    defaultValues: { email: "", password: "" },
   });
 
-  const onSubmit = (data: LoginFormData) => {
-    login(data);
-  };
+  const onSubmit = (data: LoginFormData) => login(data);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">

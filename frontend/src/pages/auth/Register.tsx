@@ -41,6 +41,7 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 
 const Register = () => {
   const router = useRouter();
+
   const { mutate: register, isPending } = useMutation<
     ApiResponse<User>,
     Error,
@@ -58,18 +59,11 @@ const Register = () => {
 
   const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-      confirmPassword: "",
-    },
+    defaultValues: { email: "", password: "", confirmPassword: "" },
   });
 
   const onSubmit = (data: RegisterFormData) => {
-    register({
-      email: data.email,
-      password: data.password,
-    });
+    register({ email: data.email, password: data.password });
   };
 
   return (
