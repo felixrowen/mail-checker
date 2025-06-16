@@ -22,9 +22,9 @@ import {
 import { Loader2, Mail, Lock } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { authApi } from "@/lib/auth-api";
+import { authApi } from "@/lib/api";
 import storage from "@/utils/storage.ts";
-import type { LoginInput, AuthResponse, ApiResponse } from "@/lib/auth-api";
+import type { LoginInput, AuthResponse, ApiResponse } from "@/lib/api";
 import { useRouter } from "@/hooks/use-router";
 
 const loginSchema = z.object({
