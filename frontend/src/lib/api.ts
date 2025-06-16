@@ -26,10 +26,22 @@ export interface CreateCheckInput {
   domain: string;
 }
 
+export interface CheckResultDetail {
+  status: string;
+  message: string;
+}
+
+export interface CheckResultData {
+  spf: CheckResultDetail;
+  dkim: CheckResultDetail;
+  dmarc: CheckResultDetail;
+  mail_echo: CheckResultDetail;
+}
+
 export interface CheckResult {
   id: string;
   domain: string;
-  result: unknown;
+  result: CheckResultData;
   userId: string;
   createdAt: string;
   updatedAt: string;

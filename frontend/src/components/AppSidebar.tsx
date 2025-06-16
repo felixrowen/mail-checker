@@ -14,17 +14,17 @@ import {
 const menuItems = [
   {
     title: "Check Domain",
-    url: "#",
+    url: "/",
     icon: Search,
   },
   {
     title: "History",
-    url: "#",
+    url: "/history",
     icon: History,
   },
 ];
 
-export function AppSidebar() {
+export const AppSidebar = () => {
   return (
     <Sidebar className="border-r border-gray-200">
       <SidebarHeader className="p-6 border-b border-gray-200">
@@ -63,4 +63,4 @@ export function AppSidebar() {
       </SidebarContent>
     </Sidebar>
   );
-}
+};
