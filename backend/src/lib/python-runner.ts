@@ -2,7 +2,7 @@ import { spawn } from "child_process";
 
 export function runPythonCheck(domain: string): Promise<any> {
   return new Promise((resolve, reject) => {
-    const process = spawn("python", ["./src/scripts/check.py", domain]);
+    const process = spawn("python", ["./src/scripts/main.py", domain]);
 
     let result = "";
     let error = "";
