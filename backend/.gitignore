@@ -15,3 +15,5 @@ dist/
 
 # Prima
 backend/src/generated/prisma
+
+__pycache__/
