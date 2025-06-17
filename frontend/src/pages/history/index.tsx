@@ -8,73 +8,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   History,
   Loader2,
   Shield,
   Globe,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
+  Info,
 } from "lucide-react";
-import type { ApiResponse, CheckResult, CheckResultDetail } from "@/api/types";
-
-const getStatusIcon = (status: string) => {
-  switch (status) {
-    case "ok":
-    case "pass":
-      return <CheckCircle className="h-4 w-4 text-green-600" />;
-    case "error":
-    case "fail":
-      return <XCircle className="h-4 w-4 text-red-600" />;
-    case "missing":
-    case "warning":
-      return <AlertCircle className="h-4 w-4 text-yellow-600" />;
-    default:
-      return <AlertCircle className="h-4 w-4 text-gray-600" />;
-  }
-};
-
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case "ok":
-    case "pass":
-      return "bg-green-50 text-green-700 border-green-200";
-    case "error":
-    case "fail":
-      return "bg-red-50 text-red-700 border-red-200";
-    case "missing":
-    case "warning":
-      return "bg-yellow-50 text-yellow-700 border-yellow-200";
-    default:
-      return "bg-gray-50 text-gray-700 border-gray-200";
-  }
-};
-
-const CheckDetail = ({
-  title,
-  result,
-}: {
-  title: string;
-  result: CheckResultDetail;
-}) => (
-  <div className="flex items-start justify-between p-3 border rounded-lg bg-white">
-    <div className="flex items-start gap-3 flex-1">
-      {getStatusIcon(result.status)}
-      <div className="flex-1">
-        <div className="font-medium text-sm">{title}</div>
-        <div className="text-xs text-gray-600 mt-1">{result.message}</div>
-      </div>
-    </div>
-    <Badge
-      variant="outline"
-      className={`text-xs ${getStatusColor(result.status)}`}
-    >
-      {result.status}
-    </Badge>
-  </div>
-);
+import type { ApiResponse, CheckResult } from "@/api/types";
+import {
+  SpfDetail,
+  DkimDetail,
+  DmarcDetail,
+  MailEchoDetail,
+} from "@/components/CheckDetails";
 
 const HistoryPage = () => {
   const { data: historyResponse, isLoading } = useQuery<
@@ -126,25 +73,22 @@ const HistoryPage = () => {
                     <Globe className="w-5 h-5 text-blue-600" />
                     <span className="truncate">{check.domain}</span>
                   </CardTitle>
-                  <CardDescription>
-                    Checked on {new Date(check.createdAt).toLocaleString()}
+                  <CardDescription className="flex items-center gap-2">
+                    <span>
+                      Checked on {new Date(check.createdAt).toLocaleString()}
+                    </span>
+                    <Info className="h-3 w-3 text-gray-400" />
+                    <span className="text-xs">
+                      Click arrows to expand details
+                    </span>
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <CheckDetail title="SPF Record" result={check.result.spf} />
-                    <CheckDetail
-                      title="DKIM Record"
-                      result={check.result.dkim}
-                    />
-                    <CheckDetail
-                      title="DMARC Record"
-                      result={check.result.dmarc}
-                    />
-                    <CheckDetail
-                      title="Mail Server"
-                      result={check.result.mail_echo}
-                    />
+                  <div className="space-y-4">
+                    <SpfDetail result={check.result.spf} />
+                    <DkimDetail result={check.result.dkim} />
+                    <DmarcDetail result={check.result.dmarc} />
+                    <MailEchoDetail result={check.result.mail_echo} />
                   </div>
                 </CardContent>
               </Card>
