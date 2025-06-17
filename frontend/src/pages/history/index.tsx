@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { checkApi } from "@/lib/api";
-import type { CheckResult, ApiResponse, CheckResultDetail } from "@/lib/api";
+import { checkApi } from "@/api";
+import type { CheckResult, ApiResponse, CheckResultDetail } from "@/api";
 import storage from "@/utils/storage.ts";
 import {
   Card,

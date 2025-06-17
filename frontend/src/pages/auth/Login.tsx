@@ -22,10 +22,10 @@ import {
 import { Loader2, Mail, Lock } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { authApi } from "@/lib/api";
+import { authApi } from "@/api";
 import storage from "@/utils/storage.ts";
-import type { LoginInput, AuthResponse, ApiResponse } from "@/lib/api";
 import { useRouter } from "@/hooks/use-router";
+import type { ApiResponse, AuthResponse, LoginInput } from "@/api/types";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),

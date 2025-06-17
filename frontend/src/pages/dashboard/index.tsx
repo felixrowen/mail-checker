@@ -28,13 +28,13 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { checkApi } from "@/lib/api";
+import { checkApi } from "@/api";
 import type {
   CreateCheckInput,
   CheckResult,
   ApiResponse,
   CheckResultDetail,
-} from "@/lib/api";
+} from "@/api";
 import { toast } from "sonner";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
