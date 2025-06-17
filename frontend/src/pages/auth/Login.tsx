@@ -59,7 +59,7 @@ const Login = () => {
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: "", password: "" },
+    defaultValues: { email: "test@gmail.com", password: "" },
   });
 
   const onSubmit = (data: LoginFormData) => login(data);
@@ -85,7 +85,10 @@ const Login = () => {
                     <FormItem>
                       <FormLabel className="flex items-center gap-2">
                         <Mail className="h-4 w-4" />
-                        Email
+                        Email{" "}
+                        <span className="text-xs text-gray-500">
+                          (test@gmail.com)
+                        </span>
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -107,7 +110,8 @@ const Login = () => {
                     <FormItem>
                       <FormLabel className="flex items-center gap-2">
                         <Lock className="h-4 w-4" />
-                        Password
+                        Password{" "}
+                        <span className="text-xs text-gray-500">(123123)</span>
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -134,7 +138,6 @@ const Login = () => {
                 </Button>
               </form>
             </Form>
-
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
                 Don't have an account?{" "}
