@@ -146,10 +146,9 @@ const options = {
 const swaggerSpec = swaggerJSDoc(options);
 
 export const setupSwagger = (app: Express): void => {
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
-    explorer: true,
-    customSiteTitle: 'VeriMail API Documentation'
-  }));
+  // Basic swagger setup
+  app.use('/api-docs', swaggerUi.serve);
+  app.get('/api-docs', swaggerUi.setup(swaggerSpec));
   
   // JSON endpoint for the OpenAPI spec
   app.get('/api-docs.json', (req, res) => {
