@@ -14,7 +14,12 @@ import { API_URL } from "./config";
 
 const getErrorMessage = (error: unknown, fallback: string): string => {
   if (error instanceof AxiosError) {
-    return error.response?.data?.message || error.message || fallback;
+    return (
+      error.response?.data?.error?.message ||
+      error.response?.data?.message ||
+      error.message ||
+      fallback
+    );
   }
   if (error instanceof Error) {
     return error.message;
