@@ -11,22 +11,9 @@ export default defineConfig({
     },
   },
   build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          router: ['react-router-dom'],
-          ui: ['@radix-ui/react-alert-dialog', '@radix-ui/react-button']
-        }
-      }
-    },
-    chunkSizeWarningLimit: 1000,
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true
-      }
-    }
+    target: 'es2015',
+    minify: 'esbuild',
+    sourcemap: false,
+    chunkSizeWarningLimit: 1000
   }
 })
