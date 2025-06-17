@@ -7,7 +7,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        - VITE_API_BASE_URL=https://codeprephub.com/api/v1
+        - VITE_API_BASE_URL=https://verimail.codeprephub.com/api/v1
     ports:
       - "8080:8080"
     restart: unless-stopped
