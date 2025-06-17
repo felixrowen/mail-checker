@@ -34,10 +34,7 @@ jobs:
             echo "Please configure .env file with your production values!"
           fi
           
-          echo "Stopping existing containers..."
-          docker-compose down
-          
-          echo "Building and starting containers..."
+          echo "Updating containers..."
           docker-compose up -d --build
           
           echo "Waiting for containers to start..."
