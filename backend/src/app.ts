@@ -10,7 +10,9 @@ const corsOptions = {
   origin: [
     'http://localhost:3000',
     'http://localhost:5173',
-    'https://verimail-check.vercel.app/'
+    'https://verimail-check.vercel.app',
+    'https://codeprephub.com',
+    'https://www.codeprephub.com'
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
