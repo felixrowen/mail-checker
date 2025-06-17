@@ -1,19 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { checkApi } from "@/api";
 import storage from "@/lib/storage";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   History,
   Loader2,
   Shield,
   Globe,
-  Info,
+  RefreshCw,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import type { ApiResponse, CheckResult } from "@/api/types";
 import {
@@ -24,6 +23,9 @@ import {
 } from "@/components/CheckDetails";
 
 const HistoryPage = () => {
+  const navigate = useNavigate();
+  const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
+
   const { data: historyResponse, isLoading } = useQuery<
     ApiResponse<CheckResult[]>,
     Error
@@ -34,7 +36,100 @@ const HistoryPage = () => {
     retry: 2,
   });
 
-  const checkHistory = historyResponse?.data || [];
+  const handleRetest = (domain: string) => 
+    navigate(`/?domain=${encodeURIComponent(domain)}`);
+
+  const toggleCardDetails = (cardId: string) => 
+    setExpandedCards(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(cardId)) {
+        newSet.delete(cardId);
+      } else {
+        newSet.add(cardId);
+      }
+      return newSet;
+    });
+
+  const checkHistory = (historyResponse?.data || [])
+    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+
+  const renderEmptyState = () => (
+    <Card>
+      <CardContent className="py-12 text-center">
+        <Shield className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+        <h3 className="text-lg font-medium mb-2">No History Available</h3>
+        <p className="text-gray-500">
+          Start checking domains to see your history here
+        </p>
+      </CardContent>
+    </Card>
+  );
+
+  const renderCheckCard = (check: CheckResult) => {
+    const isExpanded = expandedCards.has(check.id);
+    
+    return (
+      <Card key={check.id}>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Globe className="w-5 h-5 text-blue-600" />
+              <span className="truncate">{check.domain}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => toggleCardDetails(check.id)}
+                className="flex items-center gap-2"
+              >
+                {isExpanded ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {isExpanded ? "Hide Details" : "Show Details"}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleRetest(check.domain)}
+                className="flex items-center gap-2"
+              >
+                <RefreshCw className="w-4 h-4" />
+                Re-test
+              </Button>
+            </div>
+          </CardTitle>
+          <div className="text-sm text-gray-500">
+            Last checked on {new Date(check.updatedAt).toLocaleString()}
+          </div>
+        </CardHeader>
+        {isExpanded && (
+          <CardContent>
+            <div className="space-y-4">
+              <SpfDetail result={check.result.spf} />
+              <DkimDetail result={check.result.dkim} />
+              <DmarcDetail result={check.result.dmarc} />
+              {check.result.mail_echo && (
+                <MailEchoDetail
+                  result={check.result.mail_echo}
+                  domain={check.domain}
+                />
+              )}
+            </div>
+          </CardContent>
+        )}
+      </Card>
+    );
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="flex items-center gap-3">
+          <Loader2 className="h-8 w-8 animate-spin" />
+          <span className="text-lg">Loading history...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -49,50 +144,9 @@ const HistoryPage = () => {
           </p>
         </div>
 
-        {isLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin mr-3" />
-            <span className="text-lg">Loading history...</span>
-          </div>
-        ) : checkHistory.length === 0 ? (
-          <Card>
-            <CardContent className="py-12 text-center">
-              <Shield className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium mb-2">No History Available</h3>
-              <p className="text-gray-500">
-                Start checking domains to see your history here
-              </p>
-            </CardContent>
-          </Card>
-        ) : (
+        {checkHistory.length === 0 ? renderEmptyState() : (
           <div className="space-y-6">
-            {checkHistory.map((check) => (
-              <Card key={check.id}>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-3">
-                    <Globe className="w-5 h-5 text-blue-600" />
-                    <span className="truncate">{check.domain}</span>
-                  </CardTitle>
-                  <CardDescription className="flex items-center gap-2">
-                    <span>
-                      Checked on {new Date(check.createdAt).toLocaleString()}
-                    </span>
-                    <Info className="h-3 w-3 text-gray-400" />
-                    <span className="text-xs">
-                      Click arrows to expand details
-                    </span>
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <SpfDetail result={check.result.spf} />
-                    <DkimDetail result={check.result.dkim} />
-                    <DmarcDetail result={check.result.dmarc} />
-                    <MailEchoDetail result={check.result.mail_echo} />
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+            {checkHistory.map(renderCheckCard)}
           </div>
         )}
       </div>
