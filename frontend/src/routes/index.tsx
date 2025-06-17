@@ -1,4 +1,4 @@
-import storage from "@/utils/storage.ts";
+import storage from "@/lib/storage";
 import { useRoutes } from "react-router-dom";
 import { protectedRoutes } from "@/routes/protected.tsx";
 import { publicRoutes } from "@/routes/public.tsx";

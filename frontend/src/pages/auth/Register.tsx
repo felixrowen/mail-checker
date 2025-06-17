@@ -23,7 +23,7 @@ import { Loader2, Mail, Lock, UserPlus } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { authApi } from "@/api";
-import type { RegisterInput, User, ApiResponse } from "@/api";
+import type { RegisterInput, User, ApiResponse } from "@/api/types";
 import { useRouter } from "@/hooks/use-router";
 
 const registerSchema = z

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { config } from "../api/config";
-import storage from "@/utils/storage";
+import storage from "@/lib/storage";
 
 const axiosInstance = axios.create({
   baseURL: config.apiBaseUrl,

@@ -23,7 +23,7 @@ import { Loader2, Mail, Lock } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { authApi } from "@/api";
-import storage from "@/utils/storage.ts";
+import storage from "@/lib/storage";
 import { useRouter } from "@/hooks/use-router";
 import type { ApiResponse, AuthResponse, LoginInput } from "@/api/types";
 

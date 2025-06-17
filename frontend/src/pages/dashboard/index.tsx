@@ -34,7 +34,7 @@ import type {
   CheckResult,
   ApiResponse,
   CheckResultDetail,
-} from "@/api";
+} from "@/api/types";
 import { toast } from "sonner";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
@@ -46,7 +46,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import storage from "@/utils/storage.ts";
+import storage from "@/lib/storage";
 import { useRouter } from "@/hooks/use-router";
 import { useState } from "react";
 

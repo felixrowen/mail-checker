@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { checkApi } from "@/api";
-import type { CheckResult, ApiResponse, CheckResultDetail } from "@/api";
-import storage from "@/utils/storage.ts";
+import storage from "@/lib/storage";
 import {
   Card,
   CardContent,
@@ -19,6 +18,7 @@ import {
   XCircle,
   AlertCircle,
 } from "lucide-react";
+import type { ApiResponse, CheckResult, CheckResultDetail } from "@/api/types";
 
 const getStatusIcon = (status: string) => {
   switch (status) {
@@ -52,7 +52,13 @@ const getStatusColor = (status: string) => {
   }
 };
 
-const CheckDetail = ({ title, result }: { title: string; result: CheckResultDetail }) => (
+const CheckDetail = ({
+  title,
+  result,
+}: {
+  title: string;
+  result: CheckResultDetail;
+}) => (
   <div className="flex items-start justify-between p-3 border rounded-lg bg-white">
     <div className="flex items-start gap-3 flex-1">
       {getStatusIcon(result.status)}
@@ -61,7 +67,10 @@ const CheckDetail = ({ title, result }: { title: string; result: CheckResultDeta
         <div className="text-xs text-gray-600 mt-1">{result.message}</div>
       </div>
     </div>
-    <Badge variant="outline" className={`text-xs ${getStatusColor(result.status)}`}>
+    <Badge
+      variant="outline"
+      className={`text-xs ${getStatusColor(result.status)}`}
+    >
       {result.status}
     </Badge>
   </div>
@@ -123,10 +132,7 @@ const HistoryPage = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <CheckDetail
-                      title="SPF Record"
-                      result={check.result.spf}
-                    />
+                    <CheckDetail title="SPF Record" result={check.result.spf} />
                     <CheckDetail
                       title="DKIM Record"
                       result={check.result.dkim}
