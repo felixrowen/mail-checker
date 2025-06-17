@@ -64,6 +64,8 @@ export interface DmarcResult {
 export interface MailEchoResult {
   status: string;
   message: string;
+  echo?: string;
+  mx_host?: string;
   feedback?: Feedback;
 }
 
@@ -71,6 +73,11 @@ export interface CheckResultData {
   spf: SpfResult;
   dkim: DkimResult;
   dmarc: DmarcResult;
+  mail_echo?: MailEchoResult;
+}
+
+export interface MailEchoResponse {
+  domain: string;
   mail_echo: MailEchoResult;
 }
 
@@ -80,6 +87,7 @@ export interface CheckResult {
   result: CheckResultData;
   userId: string;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface ApiResponse<T> {

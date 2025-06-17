@@ -10,6 +10,7 @@ export const API_URL = {
   },
   CHECK: {
     CREATE: "/check",
+    MAIL_ECHO: "/check/mail-echo",
     HISTORY: "/check/history",
   },
 } as const;

@@ -7,6 +7,7 @@ import type {
   AuthResponse,
   CreateCheckInput,
   CheckResult,
+  MailEchoResponse,
   ApiResponse,
 } from "./types";
 import { API_URL } from "./config";
@@ -50,6 +51,17 @@ export const checkApi = {
       return response.data;
     } catch (error: unknown) {
       throw new Error(getErrorMessage(error, "Failed to check domain"));
+    }
+  },
+
+  checkMailEcho: async (
+    input: CreateCheckInput
+  ): Promise<ApiResponse<MailEchoResponse>> => {
+    try {
+      const response = await axiosInstance.post(API_URL.CHECK.MAIL_ECHO, input);
+      return response.data;
+    } catch (error: unknown) {
+      throw new Error(getErrorMessage(error, "Failed to check mail echo"));
     }
   },
 
