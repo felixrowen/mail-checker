@@ -12,7 +12,7 @@ def check_mail_echo(domain):
                       for record in mx_records]
         return {"status": "ok", "message": f"MX records found: {', '.join(mx_servers[:3])}"}
 
-    except dns.resolver.NXDOMAIN:
-        return {"status": "error", "message": "No MX records found"}
-    except dns.exception.DNSException as e:
-        return {"status": "error", "message": f"DNS query failed: {str(e)}"}
+    except (dns.resolver.NXDOMAIN, dns.exception.DNSException) as e:
+        message = "No MX records found" if isinstance(
+            e, dns.resolver.NXDOMAIN) else f"DNS query failed: {str(e)}"
+        return {"status": "error", "message": message}

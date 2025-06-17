@@ -1,5 +1,14 @@
 import dns.resolver
 import dns.exception
+from feedback import get_dmarc_feedback
+
+
+def _create_result_with_feedback(status, message):
+    result = {"status": status, "message": message}
+    feedback = get_dmarc_feedback(result)
+    if feedback:
+        result["feedback"] = feedback
+    return result
 
 
 def check_dmarc(domain):
@@ -8,9 +17,10 @@ def check_dmarc(domain):
         for rdata in answers:
             record = str(rdata).strip('"')
             if record.startswith('v=DMARC1'):
-                return {"status": "valid", "message": f"DMARC record found: {record}"}
-        return {"status": "missing", "message": "No DMARC record found"}
-    except dns.resolver.NXDOMAIN:
-        return {"status": "missing", "message": "No DMARC record found"}
-    except dns.exception.DNSException as e:
-        return {"status": "error", "message": f"DNS query failed: {str(e)}"}
+                return _create_result_with_feedback("valid", f"DMARC record found: {record}")
+        return _create_result_with_feedback("missing", "No DMARC record found")
+    except (dns.resolver.NXDOMAIN, dns.exception.DNSException) as e:
+        message = "No DMARC record found" if isinstance(
+            e, dns.resolver.NXDOMAIN) else f"DNS query failed: {str(e)}"
+        status = "missing" if isinstance(e, dns.resolver.NXDOMAIN) else "error"
+        return _create_result_with_feedback(status, message)
