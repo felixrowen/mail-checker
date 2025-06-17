@@ -10,6 +10,7 @@ import {
   SidebarMenuItem,
   SidebarHeader,
 } from "@/components/ui/sidebar";
+import { useRouter } from "@/hooks/use-router";
 
 const menuItems = [
   {
@@ -25,6 +26,12 @@ const menuItems = [
 ];
 
 export const AppSidebar = () => {
+  const { push } = useRouter();
+
+  const handleNavigation = (url: string) => {
+    push(url);
+  };
+
   return (
     <Sidebar className="border-r border-gray-200">
       <SidebarHeader className="p-6 border-b border-gray-200">
@@ -47,13 +54,13 @@ export const AppSidebar = () => {
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
-                    asChild
-                    className="text-gray-700 hover:bg-blue-50 hover:text-blue-700"
+                    onClick={() => handleNavigation(item.url)}
+                    className="text-gray-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer"
                   >
-                    <a href={item.url} className="flex items-center gap-3">
+                    <div className="flex items-center gap-3">
                       <item.icon className="w-4 h-4" />
                       <span>{item.title}</span>
-                    </a>
+                    </div>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
