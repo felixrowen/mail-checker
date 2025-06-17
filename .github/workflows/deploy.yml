@@ -24,7 +24,41 @@ jobs:
         port: 22
         script: |
           cd ./mail-checker/
+          echo "Pulling latest changes..."
           git pull origin master
+          
+          echo "Checking environment file..."
+          if [ ! -f .env ]; then
+            echo "Creating .env file from template..."
+            cp env.template .env
+            echo "Please configure .env file with your production values!"
+          fi
+          
+          echo "Stopping existing containers..."
           docker-compose down
+          
+          echo "Building and starting containers..."
           docker-compose up -d --build
+          
+          echo "Waiting for containers to start..."
+          sleep 15
+          
+          echo "Running database migrations..."
+          docker-compose exec -T backend npx prisma migrate deploy || echo "Migration failed or already up to date"
+          
+          echo "Checking container status..."
+          docker-compose ps
+          
+          echo "Checking if all containers are running..."
+          if [ $(docker-compose ps -q | wc -l) -eq 0 ]; then
+            echo "ERROR: No containers are running!"
+            echo "Checking logs for errors..."
+            docker-compose logs --tail=50
+            exit 1
+          fi
+          
+          echo "Container logs (last 20 lines)..."
+          docker-compose logs --tail=20
+          
+          echo "Cleaning up unused Docker resources..."
           docker system prune -f 
