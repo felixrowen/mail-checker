@@ -36,12 +36,10 @@ export const AppSidebar = () => {
     <Sidebar className="border-r border-gray-200">
       <SidebarHeader className="p-6 border-b border-gray-200">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-gray-500 rounded-lg flex items-center justify-center">
-            <Mail className="w-4 h-4 text-white" />
+          <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+            <Mail className="w-6 h-6 text-white" />
           </div>
-          <span className="font-semibold text-lg text-gray-900">
-            VeriMail
-          </span>
+          <span className="font-semibold text-lg text-gray-900">VeriMail</span>
         </div>
       </SidebarHeader>
       <SidebarContent className="p-4">

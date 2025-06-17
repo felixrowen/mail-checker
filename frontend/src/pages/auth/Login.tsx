@@ -69,8 +69,13 @@ const Login = () => {
       <div className="w-full max-w-md">
         <Card>
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
-            <CardDescription>Sign in to your VeriMail account</CardDescription>
+            <div className="w-12 h-12 bg-black rounded-lg mx-auto flex items-center justify-center">
+              <Mail className="w-6 h-6 text-white" />
+            </div>
+            <CardTitle className="text-2xl  font-bold">Welcome Back</CardTitle>
+            <CardDescription className="text-gray-500">
+              Sign in to your VeriMail account
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <Form {...form}>
@@ -126,7 +131,11 @@ const Login = () => {
                   )}
                 />
 
-                <Button type="submit" disabled={isPending} className="w-full">
+                <Button
+                  type="submit"
+                  disabled={isPending}
+                  className="w-full text-white bg-black hover:bg-gray-800"
+                >
                   {isPending ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
