@@ -2,6 +2,24 @@ import dns.resolver
 import dns.exception
 
 
+def _get_spf_record(domain):
+    try:
+        answers = dns.resolver.resolve(domain, 'TXT')
+        for rdata in answers:
+            record = str(rdata).strip('"')
+            if record.startswith('v=spf1'):
+                return record
+    except (dns.resolver.NXDOMAIN, dns.exception.DNSException):
+        pass
+    return None
+
+
+def _add_lookup(lookups, lookup_type, domain, mechanism):
+    lookups.append(
+        {"type": lookup_type, "domain": domain, "mechanism": mechanism})
+    return 1
+
+
 def analyze_spf_lookups(spf_record, domain, visited_domains=None, depth=0):
     if visited_domains is None:
         visited_domains = set()
@@ -13,93 +31,48 @@ def analyze_spf_lookups(spf_record, domain, visited_domains=None, depth=0):
     lookups = []
     total_count = 0
 
-    # Parse SPF mechanisms that require DNS lookups
-    mechanisms = spf_record.split()
-
-    for mechanism in mechanisms:
+    for mechanism in spf_record.split():
         mechanism = mechanism.lower()
 
-        # Include mechanism
         if mechanism.startswith('include:'):
             include_domain = mechanism[8:]
-            lookups.append({
-                "type": "include",
-                "domain": include_domain,
-                "mechanism": mechanism
-            })
-            total_count += 1
+            total_count += _add_lookup(lookups,
+                                       "include", include_domain, mechanism)
 
-            # Recursively check included domain
-            try:
-                include_answers = dns.resolver.resolve(include_domain, 'TXT')
-                for rdata in include_answers:
-                    include_record = str(rdata).strip('"')
-                    if include_record.startswith('v=spf1'):
-                        nested_lookups, nested_count = analyze_spf_lookups(
-                            include_record, include_domain, visited_domains.copy(), depth + 1
-                        )
-                        lookups.extend(nested_lookups)
-                        total_count += nested_count
-                        break
-            except (dns.resolver.NXDOMAIN, dns.exception.DNSException):
-                pass
+            include_record = _get_spf_record(include_domain)
+            if include_record:
+                nested_lookups, nested_count = analyze_spf_lookups(
+                    include_record, include_domain, visited_domains.copy(), depth + 1
+                )
+                lookups.extend(nested_lookups)
+                total_count += nested_count
 
-        # A mechanism
         elif mechanism.startswith('a:') or mechanism == 'a':
             lookup_domain = mechanism[2:] if mechanism.startswith(
                 'a:') else domain
-            lookups.append({
-                "type": "a",
-                "domain": lookup_domain,
-                "mechanism": mechanism
-            })
-            total_count += 1
+            total_count += _add_lookup(lookups, "a", lookup_domain, mechanism)
 
-        # MX mechanism
         elif mechanism.startswith('mx:') or mechanism == 'mx':
             lookup_domain = mechanism[3:] if mechanism.startswith(
                 'mx:') else domain
-            lookups.append({
-                "type": "mx",
-                "domain": lookup_domain,
-                "mechanism": mechanism
-            })
-            total_count += 1
+            total_count += _add_lookup(lookups, "mx", lookup_domain, mechanism)
 
-        # EXISTS mechanism
         elif mechanism.startswith('exists:'):
-            exists_domain = mechanism[7:]
-            lookups.append({
-                "type": "exists",
-                "domain": exists_domain,
-                "mechanism": mechanism
-            })
-            total_count += 1
+            total_count += _add_lookup(lookups,
+                                       "exists", mechanism[7:], mechanism)
 
-        # Redirect modifier
         elif mechanism.startswith('redirect='):
             redirect_domain = mechanism[9:]
-            lookups.append({
-                "type": "redirect",
-                "domain": redirect_domain,
-                "mechanism": mechanism
-            })
-            total_count += 1
+            total_count += _add_lookup(lookups,
+                                       "redirect", redirect_domain, mechanism)
 
-            # Recursively check redirected domain
-            try:
-                redirect_answers = dns.resolver.resolve(redirect_domain, 'TXT')
-                for rdata in redirect_answers:
-                    redirect_record = str(rdata).strip('"')
-                    if redirect_record.startswith('v=spf1'):
-                        nested_lookups, nested_count = analyze_spf_lookups(
-                            redirect_record, redirect_domain, visited_domains.copy(), depth + 1
-                        )
-                        lookups.extend(nested_lookups)
-                        total_count += nested_count
-                        break
-            except (dns.resolver.NXDOMAIN, dns.exception.DNSException):
-                pass
+            redirect_record = _get_spf_record(redirect_domain)
+            if redirect_record:
+                nested_lookups, nested_count = analyze_spf_lookups(
+                    redirect_record, redirect_domain, visited_domains.copy(), depth + 1
+                )
+                lookups.extend(nested_lookups)
+                total_count += nested_count
 
     return lookups, total_count
 
@@ -107,48 +80,35 @@ def analyze_spf_lookups(spf_record, domain, visited_domains=None, depth=0):
 def check_spf(domain):
     try:
         answers = dns.resolver.resolve(domain, 'TXT')
-        spf_records = []
-
-        for rdata in answers:
-            txt_string = str(rdata).strip('"')
-            if txt_string.startswith('v=spf1'):
-                spf_records.append(txt_string)
+        spf_records = [str(rdata).strip('"') for rdata in answers if str(
+            rdata).strip('"').startswith('v=spf1')]
 
         if not spf_records:
-            return {
-                "status": "missing",
-                "message": "No SPF record found"
-            }
-        elif len(spf_records) > 1:
-            return {
-                "status": "invalid",
-                "message": "Multiple SPF records found (RFC violation)"
-            }
-        else:
-            spf_record = spf_records[0]
-            lookups, lookup_count = analyze_spf_lookups(spf_record, domain)
+            return {"status": "missing", "message": "No SPF record found"}
 
-            result = {
-                "status": "valid",
-                "message": f"SPF record found: {spf_record}",
-                "record": spf_record,
-                "lookups": lookups,
-                "lookup_count": lookup_count
-            }
+        if len(spf_records) > 1:
+            return {"status": "invalid", "message": "Multiple SPF records found (RFC violation)"}
 
-            if lookup_count > 10:
-                result["status"] = "warning"
-                result["warning"] = f"DNS lookup count ({lookup_count}) exceeds the maximum limit of 10. This will result in a 'permerror' and SPF authentication failure."
+        spf_record = spf_records[0]
+        lookups, lookup_count = analyze_spf_lookups(spf_record, domain)
 
-            return result
+        result = {
+            "status": "valid",
+            "message": f"SPF record found: {spf_record}",
+            "record": spf_record,
+            "lookups": lookups,
+            "lookup_count": lookup_count
+        }
+
+        if lookup_count > 10:
+            result.update({
+                "status": "warning",
+                "warning": f"DNS lookup count ({lookup_count}) exceeds the maximum limit of 10. This will result in a 'permerror' and SPF authentication failure."
+            })
+
+        return result
 
     except dns.resolver.NXDOMAIN:
-        return {
-            "status": "error",
-            "message": "Domain not found"
-        }
+        return {"status": "error", "message": "Domain not found"}
     except dns.exception.DNSException as e:
-        return {
-            "status": "error",
-            "message": f"DNS query failed: {str(e)}"
-        }
+        return {"status": "error", "message": f"DNS query failed: {str(e)}"}

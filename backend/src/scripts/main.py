@@ -22,7 +22,4 @@ if __name__ == "__main__":
         print(json.dumps({"error": "Domain argument is missing"}))
         sys.exit(1)
 
-    domain = sys.argv[1]
-    result = check_domain(domain)
-    print(json.dumps(result))
-    sys.exit(0)
+    print(json.dumps(check_domain(sys.argv[1])))
