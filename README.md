@@ -7,6 +7,9 @@ VeriMail is a comprehensive email domain verification service that helps you val
 - **Production URL**: [https://verimail.codeprephub.com/](https://verimail.codeprephub.com/)
 - **API Documentation**: [https://verimail.codeprephub.com/api-docs](https://verimail.codeprephub.com/api-docs)
 
+## 🎥 Demo Video
+https://github.com/user-attachments/assets/7a87c7ac-88a1-40b7-97ae-95ce4c83f5f5
+
 ## 🚀 Features
 
 - **Email Domain Verification**: Comprehensive checks for email configurations
