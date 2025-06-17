@@ -6,6 +6,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        - VITE_API_BASE_URL=http://62.72.58.57/api/v1
     ports:
       - "80:8080"
     restart: unless-stopped
