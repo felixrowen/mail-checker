@@ -14,20 +14,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Debug secrets
-      run: |
-        echo "Host: ${{ secrets.HOST }}"
-        echo "Username: ${{ secrets.USERNAME }}"
-        echo "Host length: ${#HOST}"
-      env:
-        HOST: ${{ secrets.HOST }}
-      
+
     - name: Deploy to server
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
+        key: ${{ secrets.SSH_KEY }}
+        port: 22
         script: |
           cd ./mail-checker/
           git pull origin master
