@@ -44,7 +44,7 @@ import {
 } from "@/components/CheckDetails";
 
 const domainSchema = z.object({
-  domain: z.string().min(1, "Domain is required"),
+  domain: z.string().min(1, "Domain or email is required"),
 });
 
 type DomainFormData = z.infer<typeof domainSchema>;
@@ -123,8 +123,12 @@ const Dashboard = () => {
     onError: (error) => toast.error(error.message || "Failed to check domain"),
   });
 
-  const formatDomain = (domain: string) => 
-    domain.startsWith("https://") ? domain : `https://${domain}`;
+  const formatDomain = (input: string) => {
+    if (input.includes("@") || input.startsWith("http")) {
+      return input;
+    }
+    return `https://${input}`;
+  };
 
   useEffect(() => {
     const domainParam = searchParams.get("domain");
@@ -201,7 +205,7 @@ const Dashboard = () => {
             <p className="text-gray-600 max-w-2xl mx-auto">
               Verify your domain's email configuration including SPF, DKIM,
               DMARC records, and mail server connectivity. Enter your domain
-              below to get started.
+              or email address below to get started.
             </p>
           </div>
 
@@ -212,7 +216,7 @@ const Dashboard = () => {
                 Domain Check
               </CardTitle>
               <CardDescription>
-                Enter the domain you want to check for mail configuration
+                Enter a domain or email address to check for mail configuration
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -225,7 +229,7 @@ const Dashboard = () => {
                       <FormItem className="flex-1">
                         <FormControl>
                           <Input
-                            placeholder="www.example.com"
+                            placeholder="www.example.com or user@example.com"
                             {...field}
                             disabled={isPending}
                           />
